@@ -33,13 +33,13 @@ class UserController extends ApiController
     public static function login(): JsonResponse
     {
         $validate = Validator::make(request()->all(), [
-            'username' => 'required|unique:users|min:4|max:60',
+            'username' => 'required|min:4|max:60',
             'password' => 'required|min:8|max:65536'
         ]);
 
         if($validate->fails()) return self::failResponseWithMessages($validate->messages());
 
-        if(User::where('username', request()->input('username'))->with('password', request()->input('password'))->exists()) {
+        if(User::where(['username' => request()->input('username'), 'password' => request()->input('password')])->exists()) {
             return self::createTokenWithResponse();
         } else {
             return self::invalidCredentialsResponse();

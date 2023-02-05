@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->text('password');
+            $table->string('status')->default('active');
             $table->string('registered_at');
             $table->string('last_login');
         });

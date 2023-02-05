@@ -19,6 +19,7 @@ return new class extends Migration
             $table->string('description');
             $table->string('thumbnail')->nullable();
             $table->string('slug');
+            $table->string('status')->default('active');
             $table->unsignedBigInteger('author_id');
         });
     }
