@@ -47,7 +47,6 @@ class UserSeeder extends Seeder
                     'last_login' => '2023-02-05T10:20:48.836Z',
                 ],
             ]);
-
         }
     }
 }

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->unsignedBigInteger('game_id');
+            $table->integer('version');
             $table->string('timestamp');
             $table->decimal('score');
         });
