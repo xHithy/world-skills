@@ -15,15 +15,10 @@ class GameController extends ApiController
         request()->input('sortDir') ? $sortDir = request()->input('sortDir'): $sortDir = 'asc';
 
         // Switch the request inputs to actual database columns, so sorting is possible
-        if(request()->input('sortBy') == 'uploaddate') $sortBy = 'version.timestamp';
+        if(request()->input('sortBy') == 'uploaddate') $sortBy = 'timestamp';
         if(request()->input('sortBy') == 'popular') $sortBy = 'score_count';
 
-        $games = Game::where('status', 'active')
-            ->withCount('score')
-            ->with('author')
-            ->with('latest')
-            ->orderBy($sortBy, $sortDir)
-            ->paginate($size);
+        $games = Game::where('status', 'active')->withCount('score')->with('author')->with('latest')->orderBy($sortBy, $sortDir)->paginate($size);
 
         $content = [];
         foreach($games as $game) {
