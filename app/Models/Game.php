@@ -11,7 +11,18 @@ class Game extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $table = 'games';
+
+    protected $fillable = [
+        'title',
+        'description',
+        'thumbnail',
+        'slug',
+        'author_id',
+        'active'
+    ];
 
     public function author(): HasOne
     {
@@ -25,6 +36,6 @@ class Game extends Model
 
     public function latest(): HasOne
     {
-        return $this->hasOne(Version::class, 'version', 'id')->ofMany('version', 'max');
+        return $this->hasOne(Version::class, 'game_id', 'id')->ofMany('version', 'max');
     }
 }
