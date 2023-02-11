@@ -7,6 +7,8 @@ use App\Models\Score;
 use App\Models\User;
 use App\Models\Version;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Contracts\View\Factory;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Routing\Redirector;
@@ -145,7 +147,6 @@ class GameController extends ApiController
         // api/v1/games/:slug/scores
         if($version == 'scores') return self::showScores($slug);
 
-
         // Redirects an iframe to the game directory so it can display the game
         return redirect('/storage/games/'.$slug.'/'.$version);
     }
@@ -196,8 +197,9 @@ class GameController extends ApiController
 
     public static function showScores($slug): JsonResponse
     {
-        $game = Game::where('slug', $slug)->first();
-        $users = User::get();
+        $game = Game::where('slug', $slug)->where('status', 'active')->first();
+        // Check only for users that arent blocked
+        $users = User::where('status', 'active')->get();
         $highscores = [];
         foreach($users as $user) {
             // If I use max() here, I can only get the max value, not other needed values such as username or timestamp
@@ -210,5 +212,43 @@ class GameController extends ApiController
             }
         }
         return response()->json(['scores' => $highscores]);
+    }
+
+    // Admin function of deleting a game, files exist, but not visible to users
+    public static function deleteGame($slug): Redirector|Application|RedirectResponse
+    {
+        Game::where('slug', $slug)->update([
+            'status' => 'deleted'
+        ]);
+        return redirect(route('games'));
+    }
+
+    public static function resetHighscores($slug): Redirector|Application|RedirectResponse
+    {
+        $game = Game::where('slug', $slug)->first();
+        Score::where('game_id', $game['id'])->delete();
+        return redirect(route('games'));
+    }
+
+    public static function deleteScore($id, $slug): Redirector|Application|RedirectResponse
+    {
+        Score::where('id', $id)->delete();
+        return redirect('XX_module_c/admin/scores/'.$slug);
+    }
+
+    public static function deleteUserScore($slug): Redirector|Application|RedirectResponse
+    {
+        $user = User::where('username', request()->input('user'))->first();
+        $game = Game::where('slug', $slug)->first();
+        Score::where('user_id', $user['id'])->where('game_id', $game['id'])->delete();
+        return redirect('XX_module_c/admin/scores/'.$slug);
+    }
+
+    public static function page($slug): Factory|View|Application
+    {
+        $game = Game::where('slug', $slug)->where('status', 'active')->with('latest')->first();
+        return view('game', [
+            'game' => $game,
+        ]);
     }
 }

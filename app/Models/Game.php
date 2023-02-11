@@ -34,6 +34,11 @@ class Game extends Model
         return $this->hasMany(Score::class, 'game_id', 'id');
     }
 
+    public function versions(): HasMany
+    {
+        return $this->hasMany(Version::class, 'game_id', 'id');
+    }
+
     public function latest(): HasOne
     {
         return $this->hasOne(Version::class, 'game_id', 'id')->ofMany('version', 'max');

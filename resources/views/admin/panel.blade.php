@@ -1,13 +1,22 @@
-<!doctype html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Admin panel</title>
-</head>
-<body>
-    <h1>Admin panel</h1>
-</body>
-</html>
+@extends('layouts/admin-layout')
+
+@section('content')
+    <main class="admin-list">
+        @foreach($admins as $admin)
+            <div class="single-admin">
+                <span>
+                    <b>Username</b>
+                    {{ $admin['username'] }}
+                </span>
+                <span>
+                    <b>Registered at</b>
+                    {{ $admin['registered_at'] }}
+                </span>
+                <span>
+                    <b>Last login</b>
+                    {{ $admin['last_login'] }}
+                </span>
+            </div>
+        @endforeach
+    </main>
+@endsection
